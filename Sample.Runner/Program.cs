@@ -27,6 +27,7 @@ namespace Sample.Runner
             //Step 4. Run the .tt files again to generate new repos and entities, note that the foreign key queries are automatically created as well as the primary key queries
 
             //Step 5. Uncomment the method below to test the new queries
+            //Test new entities and queries
 
             // To start again, just delete the db and start again from Step 1.
 
@@ -35,13 +36,10 @@ namespace Sample.Runner
 
         private static void SetupDatabase()
         {
-
-
             var command = new SqlCommand(@"
                                 USE [master]
-                                GO
 
-                                IF DB_ID('SampleDb') IS NOT NULL
+                                IF DB_ID('SampleDb') IS NULL
                                 BEGIN
 	                                CREATE DATABASE [SampleDb];
 
@@ -60,7 +58,8 @@ namespace Sample.Runner
 	                                INSERT INTO TableA VALUES ('Some value')
 	                                INSERT INTO TableA VALUES ('Some other value')
                                 END
-                                GO
+
+                                USE [SampleDb]
 
                                 ", connection);
 
@@ -69,13 +68,17 @@ namespace Sample.Runner
 
         private static void TestCurrentCodeSetup()
         {
-            var tableArRepo = new TableARepository();
-            var getAllResults = tableArRepo.GetAll(connection);
+            var tableARepo = new TableARepository();
+            var getAllResults = tableARepo.GetAll(connection);
             Debug.Assert(getAllResults.Count() > 1);
 
-            var savedTable = tableArRepo.SaveTableA(new TableA { Id = -1, StringColumn = "Test" }, connection);
-            var retrievedTable = tableArRepo.GetTableA(savedTable.Id, connection);
+            var savedTable = tableARepo.SaveTableA(new TableA { StringColumn = "Test" }, connection);
+            var retrievedTable = tableARepo.GetTableA(savedTable.Id, connection);
             Debug.Assert(savedTable.Id == retrievedTable.Id);
+
+            var customQueryResult = tableARepo.GetTableAByStringColumnA("Test", connection);
+            Debug.Assert(customQueryResult != null);
+            Debug.Assert(customQueryResult.StringColumn == "Test");
         }
 
         private static void AddAnotherTable()

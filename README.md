@@ -1,5 +1,8 @@
-# Generate Data Layer
-Generates a clean data layer using T4 Templates from an existing database
+# Generate Data Layer using Dapper
+This project shows how to generates a clean data layer using T4 Templates from an existing database, and keep it up to date with changes to the data structure.
+It uses dapper and dapper.SimpleCrud to access the data and to keep the codebase as simple and as performant as possible
+
+The generated code is placed into seperate folders designed to be overwritten by the next run, while custom code is placed in partial classes and is safe from being overwritten
 
 # To get the sample working
 Setup a database by following the following steps
